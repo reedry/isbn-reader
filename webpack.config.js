@@ -3,7 +3,7 @@ const HTMLPlugin = require("html-webpack-plugin");
 
 module.exports = {
   context: path.join(__dirname, "src"),
-  entry: "./index.ts",
+  entry: "./index.tsx",
   mode: "development",
   module: {
     rules: [
