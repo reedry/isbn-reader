@@ -3,6 +3,7 @@ import Quagga from "@ericblade/quagga2";
 
 export const App: React.FC = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [detectedCode, setDetectedCode] = useState<string | null>("");
   const [inputSource, setInputSource] = useState("");
   useEffect(() => {
     const getDevices = async () => {
@@ -20,11 +21,18 @@ export const App: React.FC = () => {
           type: "LiveStream",
           target: document.getElementById("quagga") as Element,
           constraints: {
+            width: 640,
+            height: 480,
             deviceId: inputSource,
           },
         },
         decoder: {
           readers: ["ean_reader"],
+          multiple: false,
+        },
+        locator: {
+          halfSample: true,
+          patchSize: "medium",
         },
       },
       (err) => {
@@ -36,6 +44,10 @@ export const App: React.FC = () => {
         Quagga.start();
       }
     );
+    Quagga.onDetected((data) => {
+      console.log(data.codeResult.code);
+      setDetectedCode(data.codeResult.code);
+    });
   }, [inputSource]);
   return (
     <div>
@@ -47,7 +59,8 @@ export const App: React.FC = () => {
             .map((device) => (
               <option value={device.deviceId}>{device.label}</option>
             ))}
-        </select>
+        </select>{" "}
+        detected: {detectedCode}
       </div>
       <div id="quagga"></div>
     </div>
