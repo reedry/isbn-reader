@@ -13,6 +13,8 @@ export const App: React.FC = () => {
     getDevices();
   }, []);
   useEffect(() => {
+    const width = window.screen.width;
+    const quaggaWidth = width < 640 ? width : 640;
     Quagga.init(
       {
         locate: true,
@@ -21,7 +23,7 @@ export const App: React.FC = () => {
           type: "LiveStream",
           target: document.getElementById("quagga") as Element,
           constraints: {
-            width: 640,
+            width: quaggaWidth,
             height: 480,
             deviceId: inputSource,
           },
@@ -42,6 +44,10 @@ export const App: React.FC = () => {
         }
         console.log("Initialization finished. Ready to start");
         Quagga.start();
+        Quagga.canvas.dom.overlay.setAttribute(
+          "style",
+          `margin-left: -${quaggaWidth}px`
+        );
       }
     );
     Quagga.onDetected((data) => {
